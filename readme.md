@@ -27,7 +27,7 @@
     
     function eatList(Node $node) {
         $fast = $slow = $node;
-    
+        $first_target = null;
         if($node->data == null) {
             return false;
         }
@@ -40,8 +40,14 @@
                 return false;
             }
     
-            if($fast == $slow) {
-                return true;                   //慢指针追上快指针,说明有环
+            if($fast == $slow) {                //慢指针追上快指针,说明有环
+                $p1 = $node;                    //p1指针指向head节点,p2指针指向它们第一次相交的点,然后两个指针每次移动一步,当它们再次相交,即为环的入口
+                $p2 = $fast;
+                while($p1 != $p2) {
+                    $p1    = $p1->next;
+                    $p2    = $p2->next;
+                }
+                return $p1;                     //环的入口节点
             } 
         }
     }
