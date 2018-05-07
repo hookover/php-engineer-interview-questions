@@ -1,58 +1,367 @@
 #### 1、给你四个坐标点，判断它们能不能组成一个矩形，如判断([0,0],[0,1],[1,1],[1,0])能组成一个矩形。
+    设四点(x0, y0), (x1, y1), (x2, y2), (x3, y3)
+    只要计算三个内角都是直角就可以推导出这四点组成一个矩形
+    也就是判断相邻的边正交，即相邻边的边矢量点积为0
+    (x3-x0)*(x1-x0)+(y3-y0)*(y1-y0) == 0 (以(x0, y0)为顶点的角)
+    且
+    (x0-x1)*(x2-x1)+(y0-y1)*(y2-y1) == 0 (以(x1, y1)为顶点的角)
+    且
+    (x1-x2)*(x3-x2)+(y1-y2)*(y3-y2) == 0 (以(x2, y2)为顶点的角)设四点(x0, y0), (x1, y1), (x2, y2), (x3, y3)
+    只要计算三个内角都是直角就可以推导出这四点组成一个矩形
+    也就是判断相邻的边正交，即相邻边的边矢量点积为0
+    (x3-x0)*(x1-x0)+(y3-y0)*(y1-y0) == 0 (以(x0, y0)为顶点的角)
+    且
+    (x0-x1)*(x2-x1)+(y0-y1)*(y2-y1) == 0 (以(x1, y1)为顶点的角)
+    且
+    (x1-x2)*(x3-x2)+(y1-y2)*(y3-y2) == 0 (以(x2, y2)为顶点的角)
+    
+    点积的值
+    u的大小、v的大小、u,v夹角的余弦。在u,v非零的前提下，点积如果为负，则u,v形成的角大于90度；如果为零，那么u,v垂直；如果为正，那么u,v形成的角为锐角。
+
 
 #### 2、写一段代码判断单向链表中有没有形成环，如果形成环，请找出环的入口处，即P点 
+    class Node{
+        public $data=null;
+        public $next=null;
+    }
+    
+    function eatList(Node $node) {
+        $fast = $slow = $node;
+    
+        if($node->data == null) {
+            return false;
+        }
+    
+        while (true) {
+            if($fast->next != null && $fast->next->next != null) {
+                $fast = $fast->next->next;      //快指针一次走两步
+                $slow = $slow->next;            //快指针一次走一步
+            } else {
+                return false;
+            }
+    
+            if($fast == $slow) {
+                return $fast;                   //快慢指针相交的点即为环的入口
+            }
+        }
+    }
 
 #### 3、写一个函数，获取一篇文章内容中的全部图片，并下载
+    function downImagesFromTargetUrl($url, $target_dir = null) {
+        if(!filter_var($url, FILTER_VALIDATE_URL)){
+            return false;
+        }
+        if(!$target_dir) {
+            $target_dir = './download';
+        }
+    
+        $root_url = pathinfo($url);
+    
+        $html = file_get_contents($url);            //主要
+        preg_match_all('/<img[^>]*src="([^"]*)"[^>]*>/i',$html, $matchs);   //主要
+    
+        $images = $matchs[1];
+    
+        foreach ($images as $img) {
+            $img_url = parse_url($img);
+            if(! array_key_exists('host', $img_url)) {
+                $img_url = $root_url['dirname'] . DIRECTORY_SEPARATOR . $img;
+            }
+    
+            $img_path = array_key_exists('path', $img_url) ? $img_url['path'] : $img;
+            $save = $target_dir . DIRECTORY_SEPARATOR . $img_path;
+            $save_path = pathinfo($save);
+    
+            if(!is_dir($save_path['dirname'])) {
+                mkdir($save_path['dirname'], 0777, true);
+            }
+    
+            file_put_contents($save,file_get_contents($img_url));   //主要
+        }
+    }
 
-#### 4、获取当前客户端的IP地址，并判断是否在（111.111.111.111,222.222.222.222) 
-
+#### 4、获取当前客户端的IP地址，并判断是否在（1.1.1.1,255.255.255.254) 
+    function getip() {
+        $unknown = 'unknown';
+        if ( isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] && strcasecmp($_SERVER['HTTP_X_FORWARDED_FOR'], $unknown) ) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } elseif ( isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], $unknown) ) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        /*
+        处理多层代理的情况
+        或者使用正则方式：$ip = preg_match("/[\d\.]{7,15}/", $ip, $matches) ? $matches[0] : $unknown;
+        */
+        if (false !== strpos($ip, ','))
+            $ip = reset(explode(',', $ip));
+        return $ip;
+    }
+    
+    $client_ip = getip();
+    $client_ip = ip2long($client_ip);   //64位系统无压力
+    
+    $range_min = ip2long('1.1.1.1');
+    $range_max = ip2long('255.255.255.254');
+    
+    
+    if($client_ip >= $range_min and $client_ip <= $range_max) {
+        echo 'true';
+    }else {
+        echo 'false';
+    }
 #### 5、nginx的log_format配置如下： 
-    log_format main ‘remoteaddr−remote_user [timelocal]"request”’ 
-    ‘statusbody_bytes_sent “httpreferer"″"http_user_agent” “upstreamresponsetime""request_time” “http_x_forwarded_for"';
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                           '$upstream_response_time '
+                           '$status $body_bytes_sent "$http_referer" '
+                           '"$http_user_agent" "$http_x_forwarded_for"';
 从今天的nginx log文件 access.log中：
-* a、列出“request_time”最大的20行？ 
+* a、列出"request_time"最大的20行？ 
 * b、列出早上10点访问量做多的20个url地址？
+
+
+    a: cat /usr/local/var/log/nginx/access.log|sort -nrk9|head -2
+    b: grep "07/May/2018:10:" /usr/local/var/log/nginx/access.log|awk '{print $12}'|sort -rn|uniq -c|head -20
+    
 			
 #### 6、什么是CSRF攻击？XSS攻击？如何防范？
 
 #### 7、应用中我们经常会遇到在user表随机调取10条数据来展示的情况，简述你如何实现该功能。
 
-#### 8、从扑克牌中随机抽5张牌，判断是不是一个顺子，即这5张牌是连续的
+    select * from user where rand() limit 10;
+
+#### 8、从扑克牌中随机抽5张牌，判断是不是一个顺子,即这5张牌是连续的,JQK用11、12、13表示
+    
+    我的理解: 既然是顺子,那么肯定没有对子,找到最小的值后,顺序加1看是否存在,如果都存在,则为顺
+    
 
 #### 9、两条相交的单向链表，如何求它们的第一个公共节点
+    第二题
 
 #### 10、最长公共子序列问题LCS，如有[1,2,5,11,32,15,77]和[99,32,15,5,1,77]两个数组，找到它们共同都拥有的数，写出时间复杂度最优的代码，不能用array_intersect（这里有坑，需要去研究一下动态规划）。 
+    
 
 #### 11、linux的内存分配和多线程原理
+    
 
 #### 12、MYSQL中主键与唯一索引的区别
+    主键:不允许null的存在
+    唯一索引:允许null的存在
 
 #### 13、http与https的主要区别
+    http在应用层
+    https在传输层
+    
+    http是明文传输
+    https是加密传输
+    
 
 #### 14、http状态码及其含意 
+    基本记住200、201、301、302、400、403、404、500、502、503就差不太多了
 
-#### 15、linux中怎么查看系统资源占用情况 
+#### 15、linux中怎么查看系统资源占用情况,同时会问到怎么查看TCP端口,TCP连接状态
+    top         //可能会问得更深,比如显示出来有哪些信息、你关心哪些信息、查看某个进程等
+    iostat      //磁盘cpu
+    free        //内存剩余
+    df          //磁盘使用情况
+    du          //文件占用信息
+    
+    ps              //查看进程信息
+    netstat -anptol //查看端口占用情况,参数细节建议查文档,小心被问倒
 
 #### 16、SQL注入的原理是什么？如何防止SQL注入 
+    通常都是低级程序员写的低级代码,未过滤用户输入导致的,现代框架的ORM一般都做过相应处理,如果需要自己处理,有两种解决方式:
+    1:转义用户输入,用mysql xx方法过滤SQL语句
+    2:预编译sql
 
-#### 17、isset(null) isset(false) empty(null) empty(false)输出
+#### 17、isset(null) isset(false) isset(0) empty(0) empty(null) empty(false)输出
+    你还是动手试试吧~
 
 #### 18、优化MYSQL的方法
+    个人理解: 
+    需要从整个项目环境来谈优化,具体可以分为3个方面:
+    硬件层面:
+        采用高配sass硬盘、上磁盘阵列、主从(主主)、多服务器集群、vip+keepalive等
+    架构层面:
+        分库、分区、分表
+    应用层面(下面只要你提到,面试官都可能会问细节,比如有哪些存储引擎,各有什么区别和应用场景,innodb的主键索引和非主键索引有何区别,数据结构,叶子节点存放什么?)
+        存储引擎的选择
+        字段的选择
+            越短越快
+            定长类型快于变长类型
+            整型的处理速度快于字符串类型
+        索引
+           MYSQL支持的索引类型 (发散,讲到这肯定会问你)
+           索引的使用条件
+           索引的实现结构
+               聚簇索引，聚集索引，B+Tree
+               HASH索引
+        慢查询日志
+            可帮助找到问题语句
+        通过explain来优化sql语句
+           
 
 #### 19、数据库中的事务是什么？
+    事务的特征：ACID
+    原子性Atomicity 一组DML语句要么全部成功要么全部失败
+    一致性Consistency 事务必须由一个状态到另一个状态
+    隔离性Isolation 多个事务之间能够根据事务的隔离级别表现不同
+    持久性Durability 提交后的事务，一旦提交，它对数据库中的数据修改是永久性的
+    
+    Q:当没有事务的情况会出现什么问题?
+    A:当在控制台，操作mysql数据库时候，如果没有事务控制，误操作就会造成数据的永久损失。
+    
 
+事务的隔离级别:
+    
+|隔离级别|脏读|不可重复读|幻读|加锁读?
+|--------|-----|---------|---|---
+|读未提交(Read uncommitted)|o|o|o|不加锁
+|读已提交(Read committed)|x|o|o|不加锁
+|可重复读(Repeatable read)|x|x|o(mysql不会出现 x)|不加锁
+|可串行读(Serializable)|x|x|x|加锁 (全表锁)
+
+
+    脏读：当某个客户端查询出了另外一个事务还没有提交的修改数据，即为脏读。
+    不可重复读：[同一查询]在[同一事务]中多次进行，由其它提交事务所做的修改或删除，每次返回不同的的结果集，此时发生非重复读。
+    幻读：[同一查询]在[同一事务]中多次进行，由于其它提交事务(事务可能没提交)所做的插入操作，每次返回不同的结果集，此时发生幻读。
+    
 #### 20、写一个函数，尽可能高效的从一个标准URL中取出文件的扩展名
-
+    面试官说要高效,我记得好像用正则并不高效,那么排除正则?然后他又说了是一个"标准url",难道希望你用parse_url函数?
+    那我这么写:
+    $ext = array_pop(explode('.',parse_url($url)['path']));
+    并不觉得高效~
+    
 #### 21、参数为多个日期时间的数组，返回离当前时间最近的那个时间
-
+    我只能想到foreach方式咯,欢迎大神修改
+    $data = [
+        '2015-02-02 11:11:11',
+        '2012-02-02 11:55:11',
+        '2019-12-02 11:33:11',
+        '2017-12-02 11:22:11',
+    ];
+    
+    $near = array_reduce($data, function($a, $b){
+       return abs((time() - strtotime($a))) < abs((time() - strtotime($b))) ? $a : $b;
+    });
+    
+    echo $near;
+    
 #### 22、echo、print、print_r的区别 
-
+    echo    不是函数,没有返回值,仅用于打印信息
+    print   有返回值,是函数,还能格式化输出
+    print_r 可以打印结构化的数据,如对象和数组
+    
 #### 23、http协议的header中有哪些key及含义
-
+    General
+        Request URL: http://localhost/test/t.php
+        Request Method: GET
+        Status Code: 200 OK
+        Remote Address: 127.0.0.1:80
+        Referrer Policy: no-referrer-when-downgrade
+    Reaponse Headers
+        Connection: keep-alive
+        Content-Encoding: gzip
+        Content-Type: text/html; charset=UTF-8
+        Date: Mon, 07 May 2018 10:05:43 GMT
+        Server: nginx/1.10.1
+        Transfer-Encoding: chunked
+        X-Powered-By: PHP/7.0.8
+    Request Headers
+        Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+        Accept-Encoding: gzip, deflate, br
+        Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
+        Cache-Control: no-cache
+        Connection: keep-alive
+        Host: localhost
+        Pragma: no-cache
+        Referer: http://localhost/test/
+        Upgrade-Insecure-Requests: 1
+        User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.117 Mobile Safari/537.36
+    
 #### 24、二叉树前中后遍历代码
+    树的图片看这里:https://zhidao.baidu.com/question/235504989.html
+    
+    class Node
+    {
+        public $data  = null;
+        public $left  = null;
+        public $right = null;
+    }
+    
+    $A = new Node();
+    $B = clone $A;
+    $C = clone $A;
+    $D = clone $A;
+    $E = clone $A;
+    $F = clone $A;
+    $G = clone $A;
+    $H = clone $A;
+    $I = clone $A;
+    
+    
+    $A->data = 'A';
+    $B->data = 'B';
+    $C->data = 'C';
+    $D->data = 'D';
+    $E->data = 'E';
+    $F->data = 'F';
+    $G->data = 'G';
+    $H->data = 'H';
+    $I->data = 'I';
+    
+    
+    $A->left  = $B;
+    $A->right = $C;
+    $B->left  = $D;
+    $B->right = $E;
+    $E->left  = $G;
+    $E->right = $H;
+    $G->right = $I;
+    $C->right = $F;
+    
+    /**
+     * 前序遍历: 中左右
+     * 中序遍历: 左中右
+     * 后序遍历: 左右中
+     */
+    function eatBtree($node)
+    {
+        if ($node && $node->data) {
+            eatBtree($node->left);
+            eatBtree($node->right);
+            echo $node->data;           //把这一行的位置换一换就能实现遍历方式的转变,放到最后是后序,放到最前是前序,放到中间是中序
+        }
+    }
+    
+    eatBtree($A);
+    
+    /**
+     * 层序遍历会用到队列
+     */
+    
+    function eatBtree2($node)
+    {
+        $list[] = $node;
+        while (count($list) > 0) {
+            $cur = array_shift($list);
+            if ($cur) {
+                echo $cur->data;
+    
+                if ($cur->left) {
+                    $list[] = $cur->left;
+                }
+    
+                if ($cur->right) {
+                    $list[] = $cur->right;
+                }
+            }
+        }
+    }
+    
+    eatBtree2($A);
 
 #### 25、PHP的数组和C语言的数组结构上有何区别？
-
+    
 #### 26、Redis的跳跃表怎么实现的
 
 #### 27、哈希是什么？hash冲突后，数据怎么存？
@@ -123,6 +432,7 @@
 #### 58、设计一个微信红包的功能
 
 #### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，01 1000（难点在01序号）
+    awk '{print $4}' /usr/local/var/log/nginx/access.log | cut -c9-21 | awk '{a[$1]++}END{for(i in a){print i" "a[i]}}' | sort -nrk2|head -20|cut -c12-
 
 #### 60、php7性能为什么提升这么高
 
