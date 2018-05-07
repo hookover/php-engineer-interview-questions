@@ -526,6 +526,10 @@
     linux:traceroute,windows:tracert
     
 #### 49、$a=[0,1,2,3]; $b=[1,2,3,4,5];  $a+=$b; var_dump($a)等于多少？
+    考的是数组+和array_merge的区别
+    当下标为数值时，array_merge()不会覆盖掉原来的值，但array＋array合并数组则会把最先出现的值作为最终结果返回，而把后面的数组拥有相同键名的那些值“抛弃”掉（不是覆盖）. 
+    当下标为字符时，array＋array仍然把最先出现的值作为最终结果返回，而把后面的数组拥有相同键名的那些值“抛弃”掉，但array_merge()此时会覆盖掉前面相同键名的值.
+    
 
 #### 50、$a=[1,2,3]; foreach($a as &$v){} foreach($a as $v){} var_dump($a)等于多少; (我加的)
     https://laravel-china.org/articles/7001/php-ray-foreach-and-references-thunder
@@ -546,12 +550,34 @@
 
 #### 58、设计一个微信红包的功能
 
-#### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，01 1000（难点在01序号）
+#### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，01 1000（难点在01秒数）
     awk '{print $4}' /usr/local/var/log/nginx/access.log | cut -c9-21 | awk '{a[$1]++}END{for(i in a){print i" "a[i]}}' | sort -nrk2|head -20|cut -c12-
 
 #### 60、php7性能为什么提升这么高
 
 #### 61、遍历一个多维数组
+    $data = [
+        1, 2, 4, 6,
+        [
+            2, 5, 6, 7,
+            [
+                9, 12, 55, 66, 77
+            ]
+        ],
+    ];
+    
+    function eatArr(array $arr)
+    {
+        foreach ($arr as $item) {
+            if (is_array($item)) {
+                eatArr($item);
+            } else {
+                echo $item . ' ';
+            }
+        }
+    }
+    
+    eatArr($data);
     
 #### 62、有这样一个字符串abcdefgkbcdefab......随机长度，写一个函数来求bcde在这个字符串中出现的次数
     
@@ -606,6 +632,12 @@
 |    3 |  c   |  5000   | 1    |
 |    4 |  d   |  6000   | 3    |
     
+    select b.id,b.username 
+    from employee as a 
+    left join employee as b 
+    on a.manger_id=b.id 
+    where a.salary>b.salary 
+    group by b.id;
 
 #### 82、在一个坐标系内有一个N个点组成的多边形,现在有一个坐标点,写代码或思路来判断这个点是否处于多边形内
 
