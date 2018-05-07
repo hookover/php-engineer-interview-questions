@@ -41,8 +41,8 @@
             }
     
             if($fast == $slow) {
-                return $fast;                   //快慢指针相交的点即为环的入口
-            }
+                return true;                   //慢指针追上快指针,说明有环
+            } 
         }
     }
 
