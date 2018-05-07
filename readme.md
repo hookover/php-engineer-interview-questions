@@ -120,6 +120,7 @@
 
 
     a: cat /usr/local/var/log/nginx/access.log|sort -nrk9|head -2
+    
     b: grep "07/May/2018:10:" /usr/local/var/log/nginx/access.log|awk '{print $12}'|sort -rn|uniq -c|head -20
     
 			
