@@ -6,18 +6,14 @@
     且
     (x0-x1)*(x2-x1)+(y0-y1)*(y2-y1) == 0 (以(x1, y1)为顶点的角)
     且
-    (x1-x2)*(x3-x2)+(y1-y2)*(y3-y2) == 0 (以(x2, y2)为顶点的角)设四点(x0, y0), (x1, y1), (x2, y2), (x3, y3)
-    只要计算三个内角都是直角就可以推导出这四点组成一个矩形
-    也就是判断相邻的边正交，即相邻边的边矢量点积为0
-    (x3-x0)*(x1-x0)+(y3-y0)*(y1-y0) == 0 (以(x0, y0)为顶点的角)
-    且
-    (x0-x1)*(x2-x1)+(y0-y1)*(y2-y1) == 0 (以(x1, y1)为顶点的角)
-    且
     (x1-x2)*(x3-x2)+(y1-y2)*(y3-y2) == 0 (以(x2, y2)为顶点的角)
     
     点积的值
     u的大小、v的大小、u,v夹角的余弦。在u,v非零的前提下，点积如果为负，则u,v形成的角大于90度；如果为零，那么u,v垂直；如果为正，那么u,v形成的角为锐角。
 
+    
+    @lzylyd提供了通过斜率求两条边是否垂直的方式(https://baike.baidu.com/item/%E6%96%9C%E7%8E%87)
+    (y1-y2/x1-x2) * (y2-y3/x2-x3)=-1
 
 #### 2、写一段代码判断单向链表中有没有形成环，如果形成环，请找出环的入口处，即P点 
     class Node{
@@ -87,11 +83,12 @@
     }
 
 #### 4、获取当前客户端的IP地址，并判断是否在（1.1.1.1,255.255.255.254) 
-    function getip() {
+    function getip()
+    {
         $unknown = 'unknown';
-        if ( isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] && strcasecmp($_SERVER['HTTP_X_FORWARDED_FOR'], $unknown) ) {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] && strcasecmp($_SERVER['HTTP_X_FORWARDED_FOR'], $unknown)) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif ( isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], $unknown) ) {
+        } elseif (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], $unknown)) {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
         /*
@@ -104,15 +101,24 @@
     }
     
     $client_ip = getip();
-    $client_ip = ip2long($client_ip);   //64位系统无压力
+    $client_ip = sprintf('%u', ip2long($client_ip));   //64位系统无压力
     
-    $range_min = ip2long('1.1.1.1');
-    $range_max = ip2long('255.255.255.254');
+    /**
+     * plan A
+     */
+    $range_min = sprintf('%u', ip2long('1.1.1.1'));
+    $range_max = sprintf('%u', ip2long('255.255.255.255'));
+    
+    /**
+     * plan B
+     */
+    $range_min = bindec(decbin(ip2long('1.1.1.1')));
+    $range_max = bindec(decbin(ip2long('255.255.255.255')));
     
     
-    if($client_ip >= $range_min and $client_ip <= $range_max) {
+    if ($client_ip >= $range_min and $client_ip <= $range_max) {
         echo 'true';
-    }else {
+    } else {
         echo 'false';
     }
 #### 5、nginx的log_format配置如下： 
@@ -131,6 +137,16 @@
     
 			
 #### 6、什么是CSRF攻击？XSS攻击？如何防范？
+    CSRF:https://baike.baidu.com/item/CSRF/2735433
+    防范方式: CSRF TOKEN, 即提交表单时同时提交一段由服务端渲染表单时生成的token,通过校验token来防范csrf攻击
+    
+    XSS:https://baike.baidu.com/item/xss/917356
+    简单来说,XSS就是正常页面执行了用户或黑客提交的前端代码,比如你用了eval('这里执行了用户提交的代码'),
+    或者你的页面正常解析了用户提交的html代码,如用户提交的个人信息是:<img src="广告连接"><script>window.href="恶意网站连接"</script>,
+    而你不加过滤转义就入库,然后页面正常解析html代码,最终用户访问这个页面就会跳转到恶意网站 ,这就是XSS
+    防范方式: 过滤&&转义用户输入(如htmlentities、htmlspecialchars),永久不要信任客户端
+    
+    
 
 #### 7、应用中我们经常会遇到在user表随机调取10条数据来展示的情况，简述你如何实现该功能。
 
@@ -139,13 +155,30 @@
 #### 8、从扑克牌中随机抽5张牌，判断是不是一个顺子,即这5张牌是连续的,JQK用11、12、13表示
     
     我的理解: 既然是顺子,那么肯定没有对子,找到最小的值后,顺序加1看是否存在,如果都存在,则为顺
+    如果我写的话是这样:
+    function eatChicken($data)
+    {
+        $min = min($data);
+        for ($i = $min; $i < $min + 5; ++$i) {
+            if (!in_array($i, $data)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    var_dump(eatChicken([1, 3, 5, 2, 4]));
+    var_dump(eatChicken([10, 13, 11, 12, 14]));
+    var_dump(eatChicken([1, 3, 5, 7, 9]));
+    
+    有更好方法请补充
     
 
 #### 9、两条相交的单向链表，如何求它们的第一个公共节点
     第二题
 
 #### 10、最长公共子序列问题LCS，如有[1,2,5,11,32,15,77]和[99,32,15,5,1,77]两个数组，找到它们共同都拥有的数，写出时间复杂度最优的代码，不能用array_intersect（这里有坑，需要去研究一下动态规划）。 
-    
+        
 
 #### 11、linux的内存分配和多线程原理
     
@@ -161,6 +194,18 @@
     http是明文传输
     https是加密传输
     
+    面试官会问到ssl数字证书,对称加密和非对称加密的区别
+    
+    
+    超文本传输协议HTTP协议被用于在Web浏览器和网站服务器之间传递信息。HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此HTTP协议不适合传输一些敏感信息，比如信用卡号、密码等。
+    为了解决HTTP协议的这一缺陷，需要使用另一种协议：安全套接字层超文本传输协议HTTPS。为了数据传输的安全，HTTPS在HTTP的基础上加入了SSL协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。
+    HTTPS和HTTP的区别主要为以下四点：
+    一、https协议需要到ca申请证书，一般免费证书很少，需要交费。
+    二、http是超文本传输协议，信息是明文传输，https 则是具有安全性的ssl加密传输协议。
+    三、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
+    四、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
+    
+    https://baike.baidu.com/item/https
 
 #### 14、http状态码及其含意 
     基本记住200、201、301、302、400、403、404、500、502、503就差不太多了
@@ -369,8 +414,8 @@
 
 #### 25、PHP的数组和C语言的数组结构上有何区别？
     C语言数组的定义: C语言标准中规定，一个数组类型描述了连续分配的非空的具有特定元素对象类型的对象集合。这些元素对象的类型称为元素类型。数组类型由元素类型与元素的数目确定。
-    PHP数组的数据结构是采用HashTable来实现的,而它的hash冲突的解决方式使用的是拉链法。
-    这个题目不是一两句能讲得很清楚的,建议查一下资料,了解zavl联合体,实现数组的具体方式
+    PHP数组的数据结构是采用HashTable来实现的,而它的hash冲突的解决方式使用的是拉链法,PHP7的HashTable本身的结构与5又不同。
+    这个题目不是我一两句能讲得很清楚的,建议查一下资料,了解zavl联合体,实现数组的具体方式,以便面试官出题时,你能通过自已的理解讲出来
 
 #### 26、Redis中的有序集合是怎么实现的,它的数据结构是怎么样的
     https://www.cnblogs.com/paulversion/p/8194966.html
@@ -416,7 +461,7 @@
     聚集索引是一种稀疏索引，数据页上一级的索引页存储的是页指针，而不是行指针。而对于非聚集索引，则是密集索引，在数据页的上一级索引页它为每一个数据行存储一条索引记录
 
 #### 29、B+Tree是怎么进行搜索的
-
+    别人有专门的研究:https://blog.csdn.net/hguisu/article/details/7786014
 #### 30、数组和hash表的区别是什么？
     数组是编程语言提供的一种数据类型，即用一组连续的内存空间来存放数据，可以通过一个首地址，和一个数组下标，直接访问这组内存空间中的任意位置。搜索
     哈希表是数据结构这门学科中的概念，是以数组为存储方式，实现的一种可以快速查找数据的数据结构。它是将数据的值通过一个映射函数，求出一个结果，然后把数据放在这个结果对应的数组下标的位置。搜索
@@ -491,6 +536,42 @@
 ![](https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=b3c80026d72a6059461de948495d5ffe/94cad1c8a786c9179df9bed6c93d70cf3ac75763.jpg)
 
 #### 38、有两个文件文件，大小都超过了1G，一行一条数据，每行数据不超过500字节，两文件中有一部分内容是完全相同的，请写代码找到相同的行，并写到新文件中。PHP最大允许内内为255M。
+    好像又是一个大文件处理,面试官出题的意图并不希望你两层for循环进行遍历,这种答案肯定是不会要的,看64题的连接,专门讲处理大数据的各种方式。
+    那借用文章的方案,这道题目我的解法思路是:
+        顺序读取两个文件的的全部记录,将每条记录经过hash->转换为10进制->%n后存到10个文件中,这样一共2G的数据分成10份,每份就是204.8M,低于内存限制,
+        我可以一次读取一个文件,并用hash桶的方式得到单个文件中的内容是否有重复,因为每条记录都经过hash处理的,所以相同的记录肯定会在同一个文件中。
+        
+        下面是伪代码:
+        
+        /**
+         * 将两个文件中的每条记录通过hash求余后分别存入10个文件中
+         * 如果某个文件太大,超过限制内存大小,则可以对其再次hash求余
+         */
+        $handler = fopen('file_a_AND_file_b', 'r');
+        
+        while ($line = fgetc($handler)) {
+            $save_to_file_name = crc32(hash('md5', $line)) % 10;
+            file_put_contents($save_to_file_name, $line);     
+        }
+        
+        /**
+         *
+         */
+        $files = [ '10个文件的路径' ];
+        foreach ($files as $file) {
+        
+            $handler = fopen($file, 'r');
+            $tmp_arr = [];
+            while($line = fgetc($handler)) {
+                if(isset($tmp_arr[$line])) {
+                    file_put_contents('common_content.txt', $line);
+                } else {
+                    $tmp_arr[$line] = true;
+                }
+            }
+        
+        }
+    
     
 #### 39、请写出自少两个支持回调处理的PHP函数，并自己实现一个支持回调的PHP函数
     
@@ -507,20 +588,115 @@
     }));
     
 #### 40、请写出自少两个获取指定文件夹下所有文件的方法（代码或思路）。
+    //递归
+    function readDirDeep($path,$deep = 0)
+    {
+        $handle = opendir($path);
+        while(false !== ($filename = readdir($handle))){
+            if($filename == '.' || $filename == '..') continue;
+            echo str_repeat('&nbsp;',$deep*5) . $filename.'<br>';
+                //str_repeat(str,n) 重复一个str字符串n次
+            if(is_dir($path.'/'.$filename)){
+                readDirDeep($path.'/'.$filename,$deep+1);
+                }
+            }
+            //闭关
+            closedir($handle);
+    }
+    
+    //队列
+    队列的方式就是遇到目录就放入队列,非目录打印就好
+    function readDirQueue($dir)
+    {
+        $dirs = [$dir];
+    
+        while ($path = array_shift($dirs)) {
+            if (is_dir($path) && $handle = opendir($path)) {
+                while (false !== ($filename = readdir($handle))) {
+                    if ($filename == '.' || $filename == '..') continue;
+                    $real_path = $path . DIRECTORY_SEPARATOR . $filename;
+    
+                    if(is_dir($real_path)) {
+                        $dirs[] = $real_path;
+                    }else {
+                        echo $real_path . '<br/>';
+                    }
+                }
+                //闭关
+                closedir($handle);
+            }
+        }
+    
+    }
 
 #### 41、请写出自少三种截取文件名后缀的方法或函数（PHP原生函数和自己实现函数均可）
-
+    $file = 'x.y.z.png';
+    $ext = substr(strrchr($file, '.'), 1);
+    $ext = pathinfo($file)['extension'];
+    $ext = array_pop(explode('.', $file));
+    
+    https://blog.csdn.net/zls986992484/article/details/52629684
+    
 #### 42、PHP如何实现不用自带的cookie函数为客户端下发cookie。对于分布式系统，如何来保存session值。
-
+    1、可以使用页面直接输出cookie,客户端js写入,如:
+    <?php 
+        $cookie = 'abcd...';
+        "<script> setcookie($cookie); </script>"
+    ?>
+    2、通过JSON数据传递,JS前端保存,如:
+    <?php
+        json_encode(['cookie'=>'abcd...']);
+    ?>
+    <html><body><script>
+        ajax{
+            success: function(data){
+                var cookie = data.cookie;
+            }
+        }
+    </script></body></html>
+    
+    
 #### 43、请用SHELL统计5分钟内，nginx日志里访问最多的URL地址，对应的IP是哪些？
-
+    工作量有点大,先等等
 #### 44、写一段shell脚本实现备份mysql指定库（如test)到指定文件夹并打包，并删除30天前的备份，然后将新的备份推送到远端服务器，完成后送邮件通知。
-
+    工作量有点大,先等等
 #### 45、mysql数据库中innodb和myisam引擎的区别
-
+    InnoDB：
+    支持事务处理等
+    不加锁读取
+    支持外键
+    支持行锁
+    不支持FULLTEXT类型的索引
+    不保存表的具体行数，扫描表来计算有多少行
+    DELETE 表时，是一行一行的删除
+    InnoDB 把数据和索引存放在表空间里面
+    跨平台可直接拷贝使用
+    InnoDB中必须包含AUTO_INCREMENT类型字段的索引
+    表格很难被压缩
+    
+    MyISAM：
+    不支持事务，回滚将造成不完全回滚，不具有原子性
+    不支持外键
+    不支持外键
+    支持全文搜索
+    保存表的具体行数,不带where时，直接返回保存的行数
+    DELETE 表时，先drop表，然后重建表
+    MyISAM 表被存放在三个文件 。frm 文件存放表格定义。 数据文件是MYD (MYData) 。 索引文件是MYI (MYIndex)引伸
+    跨平台很难直接拷贝
+    MyISAM中可以使AUTO_INCREMENT类型字段建立联合索引
+    表格可以被压缩
+    
+    重点:
+    MYSQL5.7之后,原先INNODB不具有的功能已经全部完善,也就是MYISAM的优点INNODB全部都有,并且在即将到来的MYSQL8.0版本myisam将被废弃
+    
 #### 46、从用户在浏览器中输入网址并回车，到看到完整的页面，中间都经历了哪些过程。
-
+     浏览器->url->dns->ip->port->tcp->nginx->php
+       ^  <-  client ip:port  <- ^ <-  ^  <-
+       
+     整个过程大概会涉及这些,里面的细节可以去了解一下
+    
 #### 47、如何分析一条sql语句的性能。
+    熟悉explain的各个参数
 
 #### 48、ping一个服务器ping不通，用哪个命令跟踪路由包？
     linux:traceroute,windows:tracert
@@ -535,17 +711,81 @@
     https://laravel-china.org/articles/7001/php-ray-foreach-and-references-thunder
 
 #### 51、数据库中的存放了用户ID,扣费很多行，redis中存放的是用户的钱包，现在要写一个脚本，将数据库中的扣费记录同步到redis中，每5分钟执行一次。请问要考虑哪些问题？
-
+    首先,本人没有实际做过此项目,我来做的话会这样:
+    
+    用户的余额我会存为整数型,比如1元用100分表示
+    MYSQL中的扣费记录会有一个更新数据的时间
+    
+    先拿到每一个待处理的用户:
+       select uid from 扣费记录表 where update_time='0000-00-00 00:00:00' group by uid;
+       
+    顺序处理每一个用户:    
+        开事务
+            处理在MYSQL中的扣费记录
+                $time = date('Y-m-d H:i:s'); //当前时间
+                update 扣费记录表 set status='已经处理状态码',update_time=$time where uid=单个用户ID;
+                {
+                    这里可以优化成一次更新完全部用户的5分钟的数据,然后再一个一个处理:
+                    update 扣费记录表 set status='已经处理状态码',update_time=$time where update_time='0000-00-00 00:00:00'
+                }
+            
+                select sum(扣费金额列) from 扣费记录表 where uid=单个用户ID and update_time=$time;    //时间点是关键
+            
+            对REDIS钱包进行处理:
+                DECRBY 递减给定数值
+                decrby key number 
+        结束事务(确保redis,扣费成功,则提交)
+    
+    
+    
 #### 52、MYSQL主从服务器，如果主服务器是innodb引擎,从服务器是myisam引擎，在实际应用中，会遇到什么问题？
-
+    完全没有经验……
+    
 #### 53、linux中进程信号有哪些？
-
+    $kill -l
+    1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL
+     5) SIGTRAP      6) SIGABRT      7) SIGBUS       8) SIGFPE
+     9) SIGKILL     10) SIGUSR1     11) SIGSEGV     12) SIGUSR2
+    13) SIGPIPE     14) SIGALRM     15) SIGTERM     17) SIGCHLD
+    18) SIGCONT     19) SIGSTOP     20) SIGTSTP     21) SIGTTIN
+    22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
+    26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO
+    30) SIGPWR      31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1
+    36) SIGRTMIN+2  37) SIGRTMIN+3  38) SIGRTMIN+4  39) SIGRTMIN+5
+    40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8  43) SIGRTMIN+9
+    44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
+    48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13
+    52) SIGRTMAX-12 53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9
+    56) SIGRTMAX-8  57) SIGRTMAX-7  58) SIGRTMAX-6  59) SIGRTMAX-5
+    60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2  63) SIGRTMAX-1
+    64) SIGRTMAX
+    
+    我只记得一个:kill -9 进程ID ...
 #### 54、redis的底层实现
 
 #### 55、异步模型
-
+    
 #### 56、10g文件，用php查看它的行数
-
+    来自网络: 它的方式是一次读取一部分数据,计算这部分数据中有多少个换行符,不断循环,效率会比顺序读取内容高
+    /*
+     * 高效率计算文件行数
+     * @author axiang
+    */
+    function count_line($file)
+    {
+        $fp = fopen($file, "r");
+        $i  = 0;
+        while (!feof($fp)) {
+            //每次读取2M
+            if ($data = fread($fp, 1024 * 1024 * 2)) {
+                //计算读取到的行数
+                $num = substr_count($data, "\n");
+                $i += $num;
+            }
+        }
+        fclose($fp);
+        return $i;
+    }
 #### 57、有10亿条订单数据，属于1000个司机的，请取出订单量前20的司机
 
 #### 58、设计一个微信红包的功能
@@ -664,9 +904,9 @@
 #### 93、['a'=>200,'b'=>100,'c'=>100],写一个自定义排序函数，按值降序,如果值一样，按键排序
 
 #### 94、设计一个缓存系统，可以定期或空间占满之后自动删除长期不用的数据，不能使用用遍历。
-
-我当时的答案是用链表来存,缓存命中就将该缓存移到链表头,然后链表尾就都是冷数据了。
-我记得之前是在哪里看过这个设计,但我忘记在连接了,请知道朋友的把连接贴上来。
+    我当时的答案是用链表来存,缓存命中就将该缓存移到链表头,然后链表尾就都是冷数据了。
+    我记得之前是在哪里看过这个设计,但我忘记在连接了,请知道朋友的把连接贴上来。
+    
 
 #### 95、==和===的区别，写出以下输出："aa"==1,"bb"==0，1=="1"
 
@@ -691,6 +931,8 @@
 #### 105、断开TCP连接时，timewait状态会出现在发起分手的一端还是被分手的一端
 
 #### 106、AWK各种数据分析考得非常多，要多练习，题目不再一一写了
+    https://segmentfault.com/a/1190000009745139
+    http://wiki.jikexueyuan.com/project/awk/
 
 #### 107、redis中集合、有序集合、hyperLog、hash的数据结构是啥样的
 
