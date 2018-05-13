@@ -787,7 +787,33 @@
         return $i;
     }
 #### 57、有10亿条订单数据，属于1000个司机的，请取出订单量前20的司机
-
+    对方希望要的思路: 
+    1、先顺序读取10亿条数据,统计每个司机各点多少订单量
+    2、构建一个最大堆,顺序过滤1000个司机,找到前20个司机
+    伪代码:
+    $order_data = [];
+    foreach(10亿条订单 as $order_info) {
+        if(isset($order_data[$order_info]) {
+            $order_data[$order_info] ++;
+        } else {
+            $order_data[$order_info] = 1;
+        }
+    }
+    
+    $map = [];
+    foreach($order_data as $num){
+        $min = min($map);
+        if($num > $min) {
+            for($i=0;$i<count($map);++$i) {
+                if($map[$i] == $min) {
+                    $map[$i] = $num;    //将最小值替换
+                    break;  //跳出循环,只替换一次
+                }
+            }
+        }
+    }
+    
+    
 #### 58、设计一个微信红包的功能
 
 #### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，01 1000（难点在01秒数）
