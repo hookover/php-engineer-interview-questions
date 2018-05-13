@@ -690,10 +690,12 @@
     MYSQL5.7之后,原先INNODB不具有的功能已经全部完善,也就是MYISAM的优点INNODB全部都有,并且在即将到来的MYSQL8.0版本myisam将被废弃
     
 #### 46、从用户在浏览器中输入网址并回车，到看到完整的页面，中间都经历了哪些过程。
-     浏览器->url->dns->ip->port->tcp->nginx->php
-       ^  <-  client ip:port  <- ^ <-  ^  <-
+     浏览器->url->dns->ip->port->tcp->nginx->server name->php-fpm/fast cgi->php
+       ^  <-  client ip:port  <- ^ <-  ^                                 <-
        
      整个过程大概会涉及这些,里面的细节可以去了解一下
+     
+     顺便问一下: fast cgi是什么? php和php-fpm是啥关系?
     
 #### 47、如何分析一条sql语句的性能。
     熟悉explain的各个参数
