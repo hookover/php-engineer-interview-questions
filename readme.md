@@ -80,7 +80,8 @@
                 mkdir($save_path['dirname'], 0777, true);
             }
     
-            file_put_contents($save,file_get_contents($img_url));   //主要
+            $down_url = is_array($img_url) ? $img : $img_url;
+            file_put_contents($save,file_get_contents($down_url));   //主要
         }
     }
 
