@@ -831,7 +831,7 @@
     }
     
     
-#### 58、设计一个微信红包的功能
+#### 58、设计一个微信红包的功能(从代码、服务器架构、数据库、性能等详细实现细节)
 
 #### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，01 1000（难点在01秒数）
     awk '{print $4}' /usr/local/var/log/nginx/access.log | cut -c9-21 | awk '{a[$1]++}END{for(i in a){print i" "a[i]}}' | sort -nrk2|head -20|cut -c12-
