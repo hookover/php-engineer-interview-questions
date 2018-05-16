@@ -814,11 +814,15 @@
     }
     
     $map = [];
-    foreach($order_data as $num){
+    foreach ($order_data as $num) {
+        if (count($map) < 20) {
+            $map[] = $num;
+            continue;
+        }
         $min = min($map);
-        if($num > $min) {
-            for($i=0;$i<count($map);++$i) {
-                if($map[$i] == $min) {
+        if ($num > $min) {
+            for ($i = 0; $i < count($map); ++$i) {
+                if ($map[$i] == $min) {
                     $map[$i] = $num;    //将最小值替换
                     break;  //跳出循环,只替换一次
                 }
