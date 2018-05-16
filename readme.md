@@ -837,6 +837,35 @@
     awk '{print $4}' /usr/local/var/log/nginx/access.log | cut -c9-21 | awk '{a[$1]++}END{for(i in a){print i" "a[i]}}' | sort -nrk2|head -20|cut -c12-
 
 #### 60、php7性能为什么提升这么高
+    https://laravel-china.org/articles/6201/questions-and-answers-that-laravel-and-phper-interviews-may-encounter
+    PHP7 和 PHP5 的区别，具体多了哪些新特性？
+        性能提升了两倍
+        结合比较运算符 (<=>)
+        标量类型声明
+        返回类型声明
+        try...catch 增加多条件判断，更多 Error 错误可以进行异常处理
+        匿名类，现在支持通过new class 来实例化一个匿名类，这可以用来替代一些“用后即焚”的完整类定义
+        …… 了解更多文章底部有 PHP7 新特性链接
+    为什么 PHP7 比 PHP5 性能提升了？
+        变量存储字节减小，减少内存占用，提升变量操作速度
+        改善数组结构，数组元素和 hash 映射表被分配在同一块内存里，降低了内存占用、提升了 cpu 缓存命中率
+        改进了函数的调用机制，通过优化参数传递的环节，减少了一些指令，提高执行效率
+        
+    
+    http://coffeephp.com/articles/4?utm_source=laravel-china.org
+    10.php7新特性#
+        ?? 运算符（NULL 合并运算符）
+        函数返回值类型声明
+        标量类型声明
+        use 批量声明
+        define 可以定义常量数组
+        闭包（ Closure）增加了一个 call 方法 详细的可以见官网：php7-new-features
+    11.php7卓越性能背后的优化#
+        减少内存分配次数
+        多使用栈内存
+        缓存数组的hash值
+        字符串解析成桉树改为宏展开
+        使用大块连续内存代替小块破碎内存 详细的可以参考鸟哥的PPT：PHP7性能之源
 
 #### 61、遍历一个多维数组
     $data = [
@@ -904,7 +933,7 @@
 
 #### 80、Trait优先级
 
-#### 81、a引用b，报错c里面类重复定义，循环引用会出现什么问题
+#### 81、a引用b，页面报错:c里面类重复定义,写出abc3个页面中的内容, 循环引用会出现什么问题?
 
 #### 82、下面员工3的薪水大于其主管的薪水，一条SQL找到薪水比下属低的主管
     
@@ -956,9 +985,11 @@
 #### 96、一个排序好的数组,将它从中间任意一个位置切分成两个数组,然后交换它们的位置并合并，合并后新数组元素如:20,21,22,25,30,1,2,3,5,6,7,8,15,18,19,写一个查询函数来查找某个值是否存在。
 
 #### 97、设计一个树形结构，再写一个函数对它进行层序遍历
+    24题
+    https://github.com/hookover/php-engineer-interview-questions#24%E4%BA%8C%E5%8F%89%E6%A0%91%E5%89%8D%E4%B8%AD%E5%90%8E%E9%81%8D%E5%8E%86%E4%BB%A3%E7%A0%81
 
 #### 98、'$var'和"$var"的区别
-
+    
 #### 99、self和static的区别
 
 #### 100、PHP的协程以及用途
