@@ -68,6 +68,8 @@
             $img_url = parse_url($img);
             if(! array_key_exists('host', $img_url)) {
                 $img_url = $root_url['dirname'] . DIRECTORY_SEPARATOR . $img;
+            } else {
+                $img_url = $img;
             }
     
             $img_path = array_key_exists('path', $img_url) ? $img_url['path'] : $img;
@@ -185,8 +187,16 @@
     这个还是百度找资料吧……
 
 #### 12、MYSQL中主键与唯一索引的区别
-    主键:不允许null的存在
-    唯一索引:允许null的存在
+    主键是一种约束，唯一索引是一种索引，两者在本质上是不同的
+    主键创建后一定包含一个唯一性索引，唯一性索引并不一定就是主键
+    唯一性索引列允许空值，而主键列不允许为空值
+    主键列在创建时，已经默认为空值 + 唯一索引了
+    主键可以被其他表引用为外键，而唯一索引不能
+    一个表最多只能创建一个主键，但可以创建多个唯一索引
+    主键更适合那些不容易更改的唯一标识，如自动递增列、身份证号等
+    在 RBO 模式下，主键的执行计划优先级要高于唯一索引。 两者可以提高查询的速度
+    
+    https://blog.csdn.net/baoqiangwang/article/details/4832814
 
 #### 13、http与https的主要区别
     http在应用层
@@ -226,7 +236,7 @@
     1:转义用户输入(htmlentities/htmlspecialchars),用mysql_real_escape_string方法过滤SQL语句的参数
     2:预编译sql    (最佳方式)
 
-#### 17、isset(null) isset(false) isset(0) empty(0) empty(null) empty(false)输出
+#### 17、isset(null) isset(false) isset(0) isset([]) empty(0) empty(null) empty(false) empty([])输出
     你还是动手试试吧~
 
 #### 18、优化MYSQL的方法
