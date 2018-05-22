@@ -31,7 +31,7 @@
         while (true) {
             if($fast->next != null && $fast->next->next != null) {
                 $fast = $fast->next->next;      //快指针一次走两步
-                $slow = $slow->next;            //快指针一次走一步
+                $slow = $slow->next;            //慢指针一次走一步
             } else {
                 return false;
             }
@@ -201,7 +201,8 @@
 #### 13、http与https的主要区别
     http在应用层
     https在传输层
-    
+    关于协议所属协议层的讨论：https://github.com/hookover/php-engineer-interview-questions/issues/7
+    
     http是明文传输
     https是加密传输
     
@@ -666,7 +667,10 @@
         }
     </script></body></html>
     
-    
+    2、分布式系统session保存：mysql、redis、memcache、文件，主要方式是就是所有app应用都操作同一个位置的session，存哪都行，具体还要看业务量，比如业务量大，可能会采用缓存集群，业务量小可能单台机器的文件就能存了
+     具体的实现方案可以在搜索，有很多案例
+    
+    
 #### 43、请用SHELL统计5分钟内，nginx日志里访问最多的URL地址，对应的IP是哪些？
     工作量有点大,先等等
 #### 44、写一段shell脚本实现备份mysql指定库（如test)到指定文件夹并打包，并删除30天前的备份，然后将新的备份推送到远端服务器，完成后送邮件通知。
@@ -709,7 +713,7 @@
      顺便问一下: fast cgi是什么? php和php-fpm是啥关系?
     
 #### 47、如何分析一条sql语句的性能。
-    熟悉explain的各个参数
+    熟悉explain分析语句后响应的各个属性
 
 #### 48、ping一个服务器ping不通，用哪个命令跟踪路由包？
     linux:traceroute,windows:tracert
