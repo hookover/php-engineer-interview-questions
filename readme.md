@@ -199,15 +199,17 @@
     https://blog.csdn.net/baoqiangwang/article/details/4832814
 
 #### 13、http与https的主要区别
-    http在应用层
-    https在传输层
-    关于协议所属协议层的讨论：https://github.com/hookover/php-engineer-interview-questions/issues/7
+    个基于OSI模型理解：
+    http工作在应用层
+    https是建立在SSL信道上的http，而SSL属于OSI模型中的传输层，所以我觉得HTTPS是属于传输层的协议
+    但有同学提出了不同看法，相关讨论见：https://github.com/hookover/php-engineer-interview-questions/issues/7
+    
+    但如果是基于TCP/IP模型的话：HTTP和SSL都是工作在应用层，那么HTTP和HTTPS同属应用层协议
     
     http是明文传输
     https是加密传输
     
     面试官会问到ssl数字证书,对称加密和非对称加密的区别
-    
     
     超文本传输协议HTTP协议被用于在Web浏览器和网站服务器之间传递信息。HTTP协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了Web浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此HTTP协议不适合传输一些敏感信息，比如信用卡号、密码等。
     为了解决HTTP协议的这一缺陷，需要使用另一种协议：安全套接字层超文本传输协议HTTPS。为了数据传输的安全，HTTPS在HTTP的基础上加入了SSL协议，SSL依靠证书来验证服务器的身份，并为浏览器和服务器之间的通信加密。
