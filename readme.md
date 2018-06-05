@@ -158,7 +158,7 @@
     
     我的理解: 既然是顺子,那么肯定没有对子,找到最小的值后,顺序加1看是否存在,如果都存在,则为顺
     如果我写的话是这样:
-    function eatChicken($data)
+    function eatChicken(arr $data)
     {
         $min = min($data);
         for ($i = $min; $i < $min + 5; ++$i) {
@@ -173,9 +173,25 @@
     var_dump(eatChicken([10, 13, 11, 12, 14]));
     var_dump(eatChicken([1, 3, 5, 7, 9]));
     
+    https://github.com/hookover/php-engineer-interview-questions/issues/8
+    @johson
+    function eatDuck(array $arr)
+    {
+	$count = count($arr);
+	if (count(array_unique($arr)) != $count) {
+	    return false;//对子
+	}
+	if (max($arr) - min($arr) != $count - 1) {
+	    return false;
+	}
+	return true;
+    }
+    var_dump(eatDuck([1, 3, 5, 2, 4]));
+    var_dump(eatDuck([10, 13, 11, 12, 14]));
+    var_dump(eatDuck([1, 3, 5, 7, 9]));
+
     有更好方法请补充
     
-
 #### 9、两条相交的单向链表，如何求它们的第一个公共节点
     第二题
 
