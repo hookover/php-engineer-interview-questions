@@ -215,13 +215,13 @@
     https://blog.csdn.net/baoqiangwang/article/details/4832814
 
 #### 13、http与https的主要区别
-    个基于OSI模型理解：
-    http工作在应用层
-    https是建立在SSL信道上的http，而SSL属于OSI模型中的传输层，所以我觉得HTTPS是属于传输层的协议
-    但有同学提出了不同看法，相关讨论见：https://github.com/hookover/php-engineer-interview-questions/issues/7
-    
-    但如果是基于TCP/IP模型的话：HTTP和SSL都是工作在应用层，那么HTTP和HTTPS同属应用层协议
-    
+    个基于OSI模型理解：
+    http工作在应用层
+    https是建立在SSL信道上的http，而SSL属于OSI模型中的传输层，所以我觉得HTTPS是属于传输层的协议
+    但有同学提出了不同看法，相关讨论见：https://github.com/hookover/php-engineer-interview-questions/issues/7
+    
+    所以如果是基于TCP/IP模型的话：HTTP和SSL都是工作在应用层，那么HTTP和HTTPS同属应用层协议
+    
     http是明文传输
     https是加密传输
     
@@ -685,8 +685,8 @@
         }
     </script></body></html>
     
-    2、分布式系统session保存：mysql、redis、memcache、文件，主要方式是就是所有app应用都操作同一个位置的session，存哪都行，具体还要看业务量，比如业务量大，可能会采用缓存集群，业务量小可能单台机器的文件就能存了
-     具体的实现方案可以在搜索，有很多案例
+    2、分布式系统session保存：mysql、redis、memcache、文件，主要方式是就是所有app应用都操作同一个位置的session，存哪都行，具体还要看业务量，比如业务量大，可能会采用缓存集群，业务量小可能单台机器的文件就能存了
+    具体的实现方案可以google/baidu搜索，有很多案例
     
     
 #### 43、请用SHELL统计5分钟内，nginx日志里访问最多的URL地址，对应的IP是哪些？
@@ -731,7 +731,7 @@
      顺便问一下: fast cgi是什么? php和php-fpm是啥关系?
     
 #### 47、如何分析一条sql语句的性能。
-    熟悉explain分析语句后响应的各个属性
+    熟悉explain分析语句后响应的各个属性
 
 #### 48、ping一个服务器ping不通，用哪个命令跟踪路由包？
     linux:traceroute,windows:tracert
@@ -1084,6 +1084,14 @@
 #### 95、==和===的区别，写出以下输出："aa"==1,"bb"==0，1=="1"
 
 #### 96、一个排序好的数组,将它从中间任意一个位置切分成两个数组,然后交换它们的位置并合并，合并后新数组元素如:20,21,22,25,30,1,2,3,5,6,7,8,15,18,19,写一个查询函数来查找某个值是否存在。
+    先放思路,有空再补答案
+    2分查找的优化版本
+    先找到中间数数字将数据分成2段,
+    判断最左边值是否小于最右值(两段数据分别做判断,先右后左,命中则不用判断)
+        如果为真,表示这一部分数据是顺序的,如果数据处于这一区间段,则仍然按2分算法继续查找
+        如果为假,表示这一部分数据不是顺序的,那么继续切成2段,重复直到只有最后一个元素或者找不到为止
+    
+    
 
 #### 97、设计一个树形结构，再写一个函数对它进行层序遍历
     24题
@@ -1110,11 +1118,17 @@
     http://wiki.jikexueyuan.com/project/awk/
 
 #### 107、redis中集合、有序集合、hyperLog、hash的数据结构是啥样的
+    备注一下:需要了解有序集合的实现方式,包括跳跃表结构和实现
 
 #### 108、描述一下:一个请求到达nginx的全部处理过程（nginx自身会调用哪些逻辑）、然后怎么与php通信，中间的流程是什么样的等等？
-
+    https://blog.csdn.net/yankai0219/article/details/8220695
+    惊群
+    顺带要了解epoll,select,poll
+   
 #### 109、nginx和php-fpm的相关配置,随便问里面各种参数啥意思
-
+    https://www.baidu.com/s?wd=nginx%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3
+    https://www.baidu.com/s?wd=php-fpm%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3
+    
 #### 110、假如有一张地图,如下图,"-"代表海洋、"+"代表陆地,用你最擅长的方式,取出陆地的坐标。
     --++----++--+++---
     -++++----+++++++--
@@ -1138,7 +1152,7 @@
         [2,1],[2,2],[2,3]
     ]
 
-    肯定有更好的解决方法，我懒得想了，面试官出题后我想了一下，用了一个暴力的方式，反正能得到答案：
+    面试官出题后我想了一下，用了一个暴力的方式，能得到答案：
     1、先遍历数组，把所有为陆地的坐标拿出来存为$all吧
     2、从陆地坐标中取一个坐标出来，并从$all中删除
     3、从$all中找到这个坐标所有相邻的陆地坐标(x+-1，y+-1),4个相邻元素，并从$all中移出
@@ -1146,4 +1160,11 @@
     5、如果找不到相邻为海洋的元素了，但$all中还有，则回到第二步
     6、直到$all为空，此时分组分好了
     
-    要写个递归，最近比较累，暂时不补代码了。而且我这个方法也不怎么好
+    这个方法也不怎么好,一定有更好的解决试,请大神补充吧
+    
+#### 基本的算法:冒泡、快速、木桶、二分查找
+
+#### 其他人的面试答案
+    http://coffeephp.com/articles/4?utm_source=laravel-china.org
+    https://laravel-china.org/articles/6844/a-php-interview-for-a-16-year-old-graduate
+    https://todayqq.gitbooks.io/phper/content/
