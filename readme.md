@@ -870,8 +870,12 @@
     
     注意：比如让你写两个接口，一个抢红包接口，一个发红包接口，让你设计整套的存储系统、代码实现，你怎么来做？
     
-#### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，01 1000（难点在01秒数）
-    awk '{print $4}' /usr/local/var/log/nginx/access.log | cut -c9-21 | awk '{a[$1]++}END{for(i in a){print i" "a[i]}}' | sort -nrk2|head -20|cut -c12-
+#### 59、根据access.log文件统计最近5秒的qps，并以如下格式显示，n秒 数量 如 ：01 1000（难点在01秒数） 
+    error.log数据：
+    2018/07/29 03:16:01 ...
+    2018/07/29 03:16:01 ...
+    
+    awk '{print $1,$2}' access.log|sort -nr|awk '{t[$1" "$2]++} END {for(i in t){print i,t[i]}}'|sort -nrk 1,2|head -20|cut -c18-
 
 #### 60、php7性能为什么提升这么高
     https://laravel-china.org/articles/6201/questions-and-answers-that-laravel-and-phper-interviews-may-encounter
