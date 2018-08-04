@@ -33,7 +33,7 @@
         while (true) {
             if($fast->next != null && $fast->next->next != null) {
                 $fast = $fast->next->next;      //快指针一次走两步
-                $slow = $slow->next;            //慢指针一次走一步
+                $slow = $slow->next;            //慢指针一次走一步
             } else {
                 return false;
             }
@@ -130,6 +130,7 @@
                            '$upstream_response_time '
                            '$status $body_bytes_sent "$http_referer" '
                            '"$http_user_agent" "$http_x_forwarded_for"';
+                           
 从今天的nginx log文件 access.log中：
 * a、列出"request_time"最大的20行？ 
 * b、列出早上10点访问量做多的20个url地址？
@@ -1059,10 +1060,25 @@
     group by b.id;
 
 #### 82、在一个坐标系内有一个N个点组成的多边形,现在有一个坐标点,写代码或思路来判断这个点是否处于多边形内
+    http://www.html-js.com/article/1517
+    博主写了3种解法
+    其中一种大概是射线穿越边界为奇数时是在多边型内，否则在多边型外，但要判断特殊情况（如处于顶点）
 
 #### 83、数据库如果出现了死锁,你怎么排查,怎么判断出现了死锁?
+    SELECT * FROM INFORMATION_SCHEMA.INNODB_TRX;
+    SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;  
+    
+    SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCKS;  
+    
+    SHOW processlist;
+    SHOW ENGINE INNODB STATUS;
+    
 
-#### 84、写一个一个程序来查找最长子串
+#### 84.1、写一个程序来查找最长子串
+
+#### 84.2、写一个程序来查找最长公共连续子串
+
+#### 84.3、寻找字符串中的最长重复子串
 
 #### 85、分析一个问题:php-fpm的日志正常,但客户端却超时了,你认为可能是哪里出了问题,怎么排查?
 
