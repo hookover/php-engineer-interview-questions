@@ -1172,6 +1172,29 @@
     
 
 #### 92、写一段代码，找到所有子集合，如[a,b,c]的子集合有{},{a},{b},{c},{ab},{ac},{abc}
+    http://plutoblog.iteye.com/blog/976218 （原理）
+    https://my.oschina.net/liuhui1990/blog/40422
+    https://blog.csdn.net/a568283992/article/details/53525253 （子集的平方和）
+    
+    //递归法
+    function allSubSet(array $arr = [], $sub_set = "", $begin_point)
+    {
+        $res = [];
+        if($sub_set) {
+            $res[] = "{" . trim($sub_set, ",") . "}";
+        }
+        for ($start_point = $begin_point; $start_point < count($arr); ++$start_point) {
+            $res = array_merge(
+                $res, 
+                allSubSet($arr, $sub_set . "," . $arr[$start_point], $start_point + 1)
+            );
+        }
+    
+        return $res;
+    }
+    
+    $data = allSubSet([1, 2, 3], '', 0);
+    var_dump($data);
 
 #### 93、['a'=>200,'b'=>100,'c'=>100],写一个自定义排序函数，按值降序,如果值一样，按键排序
 
