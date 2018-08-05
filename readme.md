@@ -1085,14 +1085,91 @@
 #### 86、nginx的工作流程是什么样的,可以画图描述
 
 #### 87、进程间通信方式有哪些
+    https://blog.csdn.net/violet_echo_0908/article/details/51201278
+    1 匿名管道通信
+    2 高级管道通信
+    3 命名管道通信
+    4 消息队列通信
+    5 信号量通信
+    6 信号
+    7 共享内存通信
+    8 套接字通信
 
 #### 88、主从复制，从服务器会读取到主服务器正在回滚的数据吗？主数据库写成功，从服务器因为一些原因写失败，最后会出现什么情况？主从复制如果键冲突怎么办？
 
 #### 89、事务有几种隔离级别？事务的隔离级别是怎么实现的?
+    
+[19、数据库中的事务是什么](#19、数据库中的事务是什么？)
 
-#### 90、什么是B+数,请画b+树的结构
+    http://tech.it168.com/a2016/0905/2900/000002900122.shtml
+    https://liuzhengyang.github.io/2017/04/18/innodb-mvcc/
+    https://blog.csdn.net/matt8/article/details/53096405    
+    
+#### 90、什么是B+数,请画b+树的结构（扩展其它树）
+    
+    https://blog.csdn.net/v_JULY_v/article/details/6530142
+    http://www.cnblogs.com/yangecnu/p/Introduce-B-Tree-and-B-Plus-Tree.html
 
-#### 91、mysql中的字符集，客户端与数据库不一致，怎么办? MYSQL中字符串到显示到界面,字符转换的过程是怎样的？数据库中的字符集是latin1,你现在将utf8的字符串存到latin1字符集的数据库表,你能将utf8的字符串存进去吗？假如你说能存,追问:能否恢复?假如能,那怎么恢复?
+#### 91.1、mysql中的字符集，客户端与数据库不一致，怎么办? 
+    
+    修改默认字符集
+    (1) 最简单的修改方法，就是修改mysql的my.ini文件中的字符集键值，
+         如    default-character-set = utf8
+          character_set_server =  utf8
+         修改完后，重启mysql的服务
+    (2) 还有一种修改字符集的方法，就是使用mysql的命令
+         mysql> SET character_set_client = utf8 ;
+         mysql> SET character_set_connection = utf8 ;
+         mysql> SET character_set_database = utf8 ;
+         mysql> SET character_set_results = utf8 ;
+         mysql> SET character_set_server = utf8 ;
+         mysql> SET collation_connection = utf8 ;
+         mysql> SET collation_database = utf8 ;
+         mysql> SET collation_server = utf8 ;
+
+#### 91.2、 MYSQL中字符串到显示到界面,字符转换的过程是怎样的？
+
+    一个完整的用户请求的字符集转换流程是
+       1) mysql Server收到请求时将请求数据从character_set_client转换为character_set_connection
+       2) 进行内部操作前将请求数据从character_set_connection转换为内部操作字符集,步骤如下
+            A. 使用每个数据字段的CHARACTER SET设定值；
+            B. 若上述值不存在，则使用对应数据表的字符集设定值
+            C. 若上述值不存在，则使用对应数据库的字符集设定值；
+            D. 若上述值不存在，则使用character_set_server设定值。
+       3) 最后将操作结果从内部操作字符集转换为character_set_results
+     
+![](images/charset.jpg)    
+ 
+
+#### 91.3、数据库中的字符集是latin1,你现在将utf8的字符串存到latin1字符集的数据库表,你能将utf8的字符串存进去吗？
+    默认情况下（如客户端、连接等字符都是utf8）：
+        英文数字和符号可以，但中文不行。
+        insert into latin1(data) values('123abc!@#');        //成功，显示正常
+        insert into latin1(data) values('中文123abc!@#');     //失败，1366错误
+        
+        因为：
+            latin1是单字节
+            utf8是三字节
+            中文需要2个字节来存储
+        
+    特殊情况（客户端字符集设置与表字符集一致，比如都是utf8）：
+        此时中英文都能插入成功
+        insert into latin1(data) values('123abc!@#');         //成功，显示正常
+        insert into latin1(data) values('中文123abc!@#');      //成功，显示乱码
+
+    
+#### 91.4、假如你说能存,追问:能否恢复? 假如能,那怎么恢复?
+    insert插入数据时，数据库会先将传入的字符串转为表中对应的字符集类型，再入库
+    
+    所以执行下面语句时：
+        insert into latin1(data) values('中文123abc!@#');      //成功，显示乱码
+   
+    客户端将"中文123abc!@#"转换成拉丁字符串，如（ä¸­æ–‡123abc!@#）传给服务MYSQL服务器,
+    MYSQL服务器将判断 ä¸­æ–‡123abc!@# 的字符集能否存入数据库，发现 OK,存入
+
+    恢复：
+    经过测试：我暂时测试没找到恢复方法
+    
 
 #### 92、写一段代码，找到所有子集合，如[a,b,c]的子集合有{},{a},{b},{c},{ab},{ac},{abc}
 
