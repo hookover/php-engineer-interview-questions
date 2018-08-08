@@ -1197,6 +1197,26 @@
     var_dump($data);
 
 #### 93、['a'=>200,'b'=>100,'c'=>100],写一个自定义排序函数，按值降序,如果值一样，按键排序
+    function kvsort($arr) {
+        $res_arr = [];
+        while (count($arr)) {
+            $min = null;
+            $min_key = null;
+    
+            foreach ($arr as $key=>$value) {
+                if(!$min || $min > $value) {
+                    $min = $value;
+                    $min_key = $key;
+                } else if($min == $value && $min_key > $key) {
+                    $min = $value;
+                    $min_key = $key;
+                }
+            }
+            unset($arr[$min_key]);
+            $res_arr[$min_key] = $min;
+        }
+        return $res_arr;
+    }
 
 #### 94、设计一个缓存系统，可以定期或空间占满之后自动删除长期不用的数据，不能使用用遍历。
     我当时的答案是用链表来存,缓存命中就将该缓存移到链表头,然后链表尾就都是冷数据了。
