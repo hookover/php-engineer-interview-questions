@@ -196,7 +196,9 @@
     有更好方法请补充,大神们来个不用内置函数的版本
     
 #### 9、两条相交的单向链表，如何求它们的第一个公共节点
-    第二题
+    https://www.cnblogs.com/cwkpql/p/4743602.html
+    https://blog.csdn.net/zuochao_2013/article/details/78447126
+    https://blog.csdn.net/jiqiren007/article/details/6572685
 
 #### 10、最长公共子序列问题LCS，如有[1,2,5,11,32,15,77]和[99,32,15,5,1,77]两个数组，找到它们共同都拥有的数，写出时间复杂度最优的代码，不能用array_intersect（这里有坑，需要去研究一下动态规划）。 
     A * "1+1+1+1+1+1+1+1 =？" *
