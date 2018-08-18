@@ -272,8 +272,36 @@
     1:转义用户输入(htmlentities/htmlspecialchars),用mysql_real_escape_string方法过滤SQL语句的参数
     2:预编译sql    (最佳方式)
 
-#### 17、isset(null) isset(false) isset(0) isset([]) empty(0) empty(null) empty(false) empty([])输出
-    你还是动手试试吧~
+#### 17、$a, $b=null, $c=false, $d="", $e=0, $f=[],以上变量分别使用 is_null, isset, empty 方法 会输出什么？
+    $null      = null;
+    $zero      = 0;
+    $empty_arr = [];
+    $false     = false;
+    $empty_str = "";
+    $not_defintd;
+    
+    isset($not_defintd)	false
+    isset($zero)	    true
+    isset($null)	    false
+    isset($false)	    true
+    isset($empty_arr)	true
+    isset($empty_str)	true
+    
+    empty($not_defintd)	true
+    empty($zero)	    true
+    empty($null)	    true
+    empty($false)	    true
+    empty($empty_arr)	true
+    empty($empty_str)	true
+    
+    
+    Notice: Undefined variable: not_defintd in /opt/webroot/test.php on line 27
+    is_null($not_defintd)	true
+    is_null($zero)	        false
+    is_null($null)	        true
+    is_null($false)	        false
+    is_null($empty_arr)	    false
+    is_null($empty_str)	    false
 
 #### 18、优化MYSQL的方法
     个人理解: 
@@ -1322,6 +1350,37 @@
 #### 103、哪些属性唯一确定一条TCP连接
 
 #### 104、myisam和innodb的区别，为什么myisam比innodb快，myisam和innodb的索引数据结构是什么样的?innodb主键索引和非主键索引的区别?其索引上存放的数据是什么样的？
+    45题
+    
+    聚簇索引（聚集索引），B+Tree：
+    
+        仅仅出现在innodb引擎的主键索引上。
+        聚簇：innodb的主键索引关键字，与 记录 是存储在一起的
+        
+        导致的结果： 
+        记录依据主键顺序排序
+        记录的真实位置会改变。随着主键索引关键字的改变而改变
+        那么innodb表上的非主键索引（二级索引）：存储的是：关键字与主键值的对应关系（而不是关键字与记录位置的对应关系）
+        导致：innodb的非主键索引：都是二次查找。
+        1关键字确定主键值。
+        2主键值确定记录
+        
+        在数据结构层面上：
+        在原来的B-Tree结构上，做了一定的改动，改动后的这个聚簇（聚集）结构称之为 B+Tree
+
+    查询速度快：
+        INNODB在做SELECT的时候，要维护的东西比MYISAM引擎多很多:
+        1）数据块，INNODB要缓存，MYISAM只缓存索引块，  这中间还有换进换出的减少
+        2）innodb寻址要映射到块，再到行，MYISAM记录的直接是文件的OFFSET，定位比INNODB要快
+        3）INNODB还需要维护MVCC一致；虽然你的场景没有，但他还是需要去检查和维护
+        MVCC (Multi-Version Concurrency Control)多版本并发控制 
+        
+        注释：
+        InnoDB：通过为每一行记录添加两个额外的隐藏的值来实现MVCC，这两个值一个记录这行数据何时被创建，另外一个记录这行数据何时过期（或者被删除）。但是InnoDB并不存储这些事件发生时的实际时间，相反它只存储这些事件发生时的系统版本号。这是一个随着事务的创建而不断增长的数字。每个事务在事务开始时会记录它自己的系统版本号。每个查询必须去检查每行数据的版本号与事务的版本号是否相同。让我们来看看当隔离级别是REPEATABLEREAD时这种策略是如何应用到特定的操作的：
+        　　SELECT InnoDB必须每行数据来保证它符合两个条件：
+        　　1、InnoDB必须找到一个行的版本，它至少要和事务的版本一样老(也即它的版本号不大于事务的版本号)。这保证了不管是事务开始之前，或者事务创建时，或者修改了这行数据的时候，这行数据是存在的。
+        　　2、这行数据的删除版本必须是未定义的或者比事务版本要大。这可以保证在事务开始之前这行数据没有被删除
+        
 
 #### 105、断开TCP连接时，timewait状态会出现在发起分手的一端还是被分手的一端
 
@@ -1375,6 +1434,41 @@
     这个方法也不怎么好,一定有更好的解决试,请大神补充吧
     
 #### 基本的算法:冒泡、快速、木桶、二分查找
+    网上找吧
+
+#### php实现一个10进制转2进制的函数
+    十进制整数转换为二进制整数采用"除2取余，逆序排列"法。
+    具体做法是：用2整除十进制整数，可以得到一个商和余数；再用2去除商，又会得到一个商和余数，如此进行，直到商为0时为止，
+    然后把先得到的余数作为二进制数的低位有效位，后得到的余数作为二进制数的高位有效位，依次排列起来。
+    789=1100010101
+    789/2=394 余1 第10位
+    394/2=197 余0 第9位
+    197/2=98 余1 第8位
+    98/2=49 余0 第7位
+    49/2=24 余1 第6位
+    24/2=12 余0 第5位
+    12/2=6 余0 第4位
+    6/2=3 余0 第3位
+    3/2=1 余1 第2位
+    1/2得0 余1 第1位
+    
+    function dec2bin($num)
+    {
+        if (!is_int($num)) return false;
+        $bin = '';
+        while ($num > 1) {
+            $bin .= $num % 2;
+            $num = ($num - $num % 2) / 2;
+        }
+        return strrev($bin . $num);
+    }
+    
+    echo dec2bin(3);
+    
+#### php-fpm的进程数量 配置多少比较合理
+    https://segmentfault.com/a/1190000000630270
+    https://gist.github.com/hookover/3c8c958026cc09dcbaa258c06db9a3ef
+    https://www.kinamo.be/en/support/faq/determining-the-correct-number-of-child-processes-for-php-fpm-on-nginx
 
 #### 其他人的面试答案
     http://coffeephp.com/articles/4?utm_source=laravel-china.org
