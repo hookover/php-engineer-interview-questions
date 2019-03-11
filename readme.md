@@ -1,3 +1,6 @@
+### 算法
+    多刷leecode
+    
 #### 1、给你四个坐标点，判断它们能不能组成一个矩形，如判断([0,0],[0,1],[1,1],[1,0])能组成一个矩形。
     设四点(x0, y0), (x1, y1), (x2, y2), (x3, y3)
     只要计算三个内角都是直角就可以推导出这四点组成一个矩形
@@ -268,7 +271,7 @@
     netstat -anptol //查看端口占用情况,参数细节建议查文档,小心被问倒
 
 #### 16、SQL注入的原理是什么？如何防止SQL注入 
-    通常都是低级程序员写的低级代码,未过滤用户输入导致的,现代框架的ORM一般都做过相应处理,如果需要自己处理,有两种解决方式:
+    通常都是初级程序员写的初级代码,未过滤用户输入导致的,现代框架的ORM一般都做过相应处理,如果需要自己处理,有两种解决方式:
     1:转义用户输入(htmlentities/htmlspecialchars),用mysql_real_escape_string方法过滤SQL语句的参数
     2:预编译sql    (最佳方式)
 
@@ -1400,7 +1403,7 @@
     https://www.baidu.com/s?wd=nginx%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3
     https://www.baidu.com/s?wd=php-fpm%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3
     
-#### 110、假如有一张地图,如下图,"-"代表海洋、"+"代表陆地,用你最擅长的方式,取出陆地的坐标。
+#### 110、假如有一张地图,如下图,"-"代表海洋、"+"代表陆地,用你最擅长的方式,取出最大陆地面积的坐标。
     --++----++--+++---
     -++++----+++++++--
     -+++----++++------
@@ -1431,7 +1434,8 @@
     5、如果找不到相邻为海洋的元素了，但$all中还有，则回到第二步
     6、直到$all为空，此时分组分好了
     
-    这个方法也不怎么好,一定有更好的解决试,请大神补充吧
+    看起来像个回溯算法题目
+    https://leetcode-cn.com/problems/max-area-of-island/
     
 #### 基本的算法:冒泡、快速、木桶、二分查找
     网上找吧
@@ -1469,6 +1473,7 @@
     https://segmentfault.com/a/1190000000630270
     https://gist.github.com/hookover/3c8c958026cc09dcbaa258c06db9a3ef
     https://www.kinamo.be/en/support/faq/determining-the-correct-number-of-child-processes-for-php-fpm-on-nginx
+
 #### https 的加密过程？
     https://developer.huawei.com/ict/forum/thread-47495.html
     单向认证（客户端无证书）：
