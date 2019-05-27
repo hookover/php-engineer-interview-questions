@@ -1485,7 +1485,7 @@
     https://todayqq.gitbooks.io/phper/content/
 
 #### 资源集合
-    《用 PHP 的方式实现的各类算法合集 》[https://github.com/PuShaoWei/arithmetic-php](https://github.com/PuShaoWei/arithmetic-php)
+    《用 PHP 的方式实现的各类算法合集 》https://github.com/PuShaoWei/arithmetic-php
     《编程之法：面试和算法心得》https://wizardforcel.gitbooks.io/the-art-of-programming-by-july/content/index.html
     《剑指OFFER-PHP实现》https://blog.csdn.net/column/details/15795.html
     《PHP版Leecode，每周五题》https://github.com/wuqinqiang/leetcode-php
